@@ -2,6 +2,9 @@
 
 import { useCartCount } from "@/stores/cart.hooks";
 import Link from "next/link";
+import { logoutAction } from "@/features/auth/action/logout.action";
+import { Button } from "@/components/ui";
+
 
 export default function ProductsHeader() {
   const cartCount = useCartCount();
@@ -37,6 +40,12 @@ export default function ProductsHeader() {
             {cartCount}
           </span>
         </Link>
+        <Button
+    onClick={async () => await logoutAction()}
+    className="rounded-md px-3 py-1.5 text-sm text-white"
+  >
+    Logout
+  </Button>
       </div>
     </header>
   );

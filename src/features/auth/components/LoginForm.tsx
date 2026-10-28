@@ -5,9 +5,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormValues } from "../schemas/login.schema";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui";
+import { useState } from "react";
+import loginAction from "../action/login.action";
+
 
 export default function LoginForm() {
   const router = useRouter();
+  const [serverError, setServerError] = useState("");
   const {
     register,
     handleSubmit,
@@ -20,15 +24,21 @@ export default function LoginForm() {
     },
   });
 
-  const onSubmit = (values: LoginFormValues) => {
+  const onSubmit = async (values: LoginFormValues) => {
     console.log(values);
-    if (
-      values.email === "sreekanth@gmail.com" &&
-      values.password === "123123123"
-    ) {
-      localStorage.setItem("isAuth", "true");
-      router.replace("/products");
+    // if (
+    //   values.email === "sreekanth@gmail.com" &&
+    //   values.password === "123123123"
+    // ) {
+    //   localStorage.setItem("isAuth", "true");
+    //   router.replace("/products");
+    // }
+    const result = await loginAction(values);
+    if (!result.success) {
+      setServerError(result.error);
+      return;
     }
+    router.replace("/products");
   };
 
   return (
@@ -37,6 +47,9 @@ export default function LoginForm() {
       className="flex w-full max-w-sm flex-col gap-5"
       noValidate
     >
+      {serverError && (
+        <p className="text-sm text-red-600">{serverError}</p>
+      )}
       <div>
         <h2 className="text-3xl font-medium">Sign in</h2>
         <p className="mt-1 text-sm text-neutral-500">
